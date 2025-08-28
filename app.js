@@ -5,22 +5,24 @@ const port = 5439;
 
 const server = express();
 
-server.use(express.json())
+server.use(express.json({ limit: '100mb' }))
+
 
 server.post('/save-url', (req, res) => {
 	if (!req.body || !req.body.url) {
 		console.log('There is no URL');
-		return res.status(400)
+		return res.sendstatus(400)
 	}
 	const url = req.body.url;
 	console.log(url);
 	fs.appendFile('sites', `${url}\n`, (err) => {
 		if (err) {
 			console.error(err);
-			return res.status(500)
+			return res.sendStatus(500)
 		}			
-		else
-			return res.status(200)
+		else {
+			res.sendStatus(200)
+		}
 	})
 })
 
