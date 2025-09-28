@@ -1,29 +1,26 @@
-import express from 'express'
-import fs from 'node:fs'
+const fs = require('node:fs');
+const http = require('http');
+const { URL } = require('url');
 
 const port = 5439;
 
-const server = express();
+const server = http.createServer( (req, res) => {
+	let body = ``;
+	let url;
+	req.on('data', (chunk) => {body += chunk.toString() } );
+	req.on('end' , () => {
+		const url = URL.parse(JSON.parse(body).url);
+		console.log(url.href);
+		fs.appendFileSync('sites', `${url}\n`, (err) => {
+			if (err) {
+				console.error(err);
+				res.writeHead(201);
+			}			
+			else
+				res.writeHead(503);
 
-server.use(express.json({ limit: '100mb' }))
-
-
-server.post('/save-url', (req, res) => {
-	if (!req.body || !req.body.url) {
-		console.log('There is no URL');
-		return res.sendstatus(400)
-	}
-	const url = req.body.url;
-	console.log(url);
-	fs.appendFile('sites', `${url}\n`, (err) => {
-		if (err) {
-			console.error(err);
-			return res.sendStatus(500)
-		}			
-		else {
-			res.sendStatus(200)
-		}
+		})
+		res.end();
 	})
-})
-
-server.listen(port, () => console.log('server started'))
+});
+server.listen(port)
