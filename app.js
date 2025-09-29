@@ -6,7 +6,6 @@ const port = 5439;
 
 const server = http.createServer( (req, res) => {
 	let body = ``;
-	let url;
 	req.on('data', (chunk) => {body += chunk.toString() } );
 	req.on('end' , () => {
 		const url = URL.parse(JSON.parse(body).url);
